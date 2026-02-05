@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Trial Signup with Snitcher Spotter Enrichment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 25px;
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Start Your Free Trial</h1>
+
+    <form id="free-trial-form" action="#" method="POST">
+        <!-- Visible form fields -->
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Work Email *</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="company">Company Name (optional - will be auto-filled if detected)</label>
+        <input type="text" id="visible_company" name="company">
+
+        <!-- Hidden fields for Snitcher Spotter data -->
+        <input type="hidden" name="snitcher_company_name" id="snitcher_company_name">
+        <input type="hidden" name="snitcher_company_industry" id="snitcher_company_industry">
+        <input type="hidden" name="snitcher_company_size" id="snitcher_company_size">
+        <input type="hidden" name="snitcher_company_location" id="snitcher_company_location">
+        <input type="hidden" name="snitcher_company_uuid" id="snitcher_company_uuid">
+
+        <button type="submit">Start Free Trial</button>
+
+        <p class="note">
+            This is a demo form. On submission, check your backend or form handler to see the hidden Snitcher fields populated with company data (if a business visitor is detected).
+        </p>
+    </form>
+
+    <!-- Snitcher Tracker Script (your actual script with your profileId) -->
+    <script>
+    !function(e){"use strict";var t=e&&e.namespace;if(t&&e.profileId&&e.cdn){var i=window[t];if(i&&Array.isArray(i)||(i=window[t]=[]),!i.initialized&&!i._loaded)if(i._loaded)console&&console.warn("[Radar] Duplicate initialization attempted");else{i._loaded=!0;["track","page","identify","group","alias","ready","debug","on","off","once","trackClick","trackSubmit","trackLink","trackForm","pageview","screen","reset","register","setAnonymousId","addSourceMiddleware","addIntegrationMiddleware","addDestinationMiddleware","giveCookieConsent"].forEach((function(e){var a;i[e]=(a=e,function(){var e=window[t];if(e.initialized)return e[a].apply(e,arguments);var i=[].slice.call(arguments);return i.unshift(a),e.push(i),e})})),-1===e.apiEndpoint.indexOf("http")&&(e.apiEndpoint="https://"+e.apiEndpoint),i.bootstrap=function(){var t,i=document.createElement("script");i.async=!0,i.type="text/javascript",i.id="__radar__",i.setAttribute("data-settings",JSON.stringify(e)),i.src=[-1!==(t=e.cdn).indexOf("http")?"":"https://",t,"/releases/latest/radar.min.js"].join("");var a=document.scripts[0];a.parentNode.insertBefore(i,a)},i.bootstrap()}}else"undefined"!=typeof console&&console.error("[Radar] Configuration incomplete")}({
+        "apiEndpoint": "radar.snitcher.com",
+        "cdn": "cdn.snitcher.com",
+        "namespace": "Snitcher",
+        "profileId": "sfwS6T7E0r"
+    });
+    </script>
+
+    <!-- Spotter Enrichment Script using Snitcher.on('initialized') -->
+    <script>
+    // Wait for Snitcher to fully initialize before querying Spotter
+    Snitcher.on('initialized', async function() {
+        try {
+            const identification = await Snitcher.getSpotterIdentification();
+
+            if (identification && identification.success) {
+                const data = identification.data;
+
+                // Populate hidden fields
+                document.getElementById('snitcher_company_name').value = data.name || '';
+                document.getElementById('snitcher_company_industry').value = data.industry || '';
+                document.getElementById('snitcher_company_size').value = data.size || '';
+                document.getElementById('snitcher_company_location').value = 
+                    data.address ? `${data.address.city || ''}, ${data.address.country || ''}`.trim() : '';
+                document.getElementById('snitcher_company_uuid').value = data.uuid || '';
+
+                // Optional: Auto-fill visible company field for better UX
+                if (data.name && !document.getElementById('visible_company').value) {
+                    document.getElementById('visible_company').value = data.name;
+                }
+
+                console.log('Snitcher Spotter enriched the form:', data.name);
+            } else {
+                console.log('No business company identified for this visitor (e.g., residential IP or no match)');
+            }
+        } catch (error) {
+            console.error('Spotter error:', error);
+        }
+    });
+    </script>
+
+</body>
+</html>
